@@ -2,3 +2,5 @@ package-lock.json
 venv
 node_modules
 __pycache__
+.gitignore
+.DS_Store
