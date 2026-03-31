@@ -16,7 +16,7 @@ def index():
     session['target_hair'] = target[3]
     session['target_sex'] = target[4]
     session['target_series'] = target[5]
-    return jsonify({"status": "Game started", "message": "Secret character selected"})
+    return jsonify({"status": "Game started"})
 
 @app.route("/api/characters")
 def search():
