@@ -6,15 +6,32 @@ const results = document.getElementById('results-container');
 const characterList = document.getElementById('character-list');
 
 let guessCount = 0;
+let allCharacterNames = [];
 
 document.addEventListener('DOMContentLoaded', async (event) => {
+    //Get target character
+    const target = await fetch('/api/start');
+
     //Get all characters for autocomplete
     const response = await fetch('/api/characters');
     const characters = await response.json();
-    for (const character of characters){
-        const characterOpt = document.createElement('option');
-        characterOpt.value = character[0];
-        characterList.appendChild(characterOpt);
+    allCharacterNames = characters.map(c => c[0]); 
+});
+
+guess.addEventListener('input', () => {
+    const val = guess.value;
+
+    if (val.length === 0) {
+        characterList.innerHTML = '';
+        return;
+    }
+
+    if (characterList.children.length === 0) {
+        allCharacterNames.forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            characterList.appendChild(opt);
+        });
     }
 });
 
@@ -65,6 +82,7 @@ async function handleGuess() {
     //Add boxes to row
     row.innerHTML = `
         <div class="text-gray-500">${guessCount}</div>
+        <div class="${getBoxClass(data.name.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.name.value}</div>
         <div class="${getBoxClass(data.age.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.age.value}${getArrow(data.age.status)}</div>
         <div class="${getBoxClass(data.height.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.height.value}${getArrow(data.height.status)}</div>
         <div class="${getBoxClass(data.hair.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.hair.value}</div>
@@ -74,6 +92,8 @@ async function handleGuess() {
 
     //Add row to results container
     resultsContainer.prepend(row);
+
+    characterList.innerHTML = '';
 }
 
 //User presses Guess button

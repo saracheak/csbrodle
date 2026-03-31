@@ -1,6 +1,8 @@
 # TV Character Game
 
-## Wordle-like game for characters from the following TV shows:
+## Wordle-like game for TV show characters 
+
+### Characters from the following TV shows:
 <li>New Girl</li>
 <li>The Summer I Turned Pretty</li>
 <li>The Office</li>
