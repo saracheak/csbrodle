@@ -1,60 +1,87 @@
 import './style.css'
-import javascriptLogo from './assets/javascript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.js'
 
-document.querySelector('#app').innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${javascriptLogo}" class="framework" alt="JavaScript logo"/>
-    <img src=${viteLogo} class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+const guess = document.getElementById('guess-input');
+const guessBtn = document.getElementById('guess-btn');
+const results = document.getElementById('results-container');
+const characterList = document.getElementById('character-list');
 
-<div class="ticks"></div>
+let guessCount = 0;
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src=${viteLogo} alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-          <img class="button-icon" src="${javascriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+document.addEventListener('DOMContentLoaded', async (event) => {
+    //Get all characters for autocomplete
+    const response = await fetch('/api/characters');
+    const characters = await response.json();
+    for (const character of characters){
+        const characterOpt = document.createElement('option');
+        characterOpt.value = character[0];
+        characterList.appendChild(characterOpt);
+    }
+});
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+async function handleGuess() {
+    console.log("User inputted a guess");
+    const input = document.getElementById('guess-input');
+    const resultsContainer = document.getElementById('results-container');
+    const name = input.value;
 
-setupCounter(document.querySelector('#counter'))
+    if (!name) return;
+
+    const response = await fetch('/api/guess', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name })
+    });
+
+    const data = await response.json();
+    console.log(data);
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    //Increment guess count for row number and reset input
+    guessCount++;
+    input.value = '';
+
+    //Create row
+    const row = document.createElement('div');
+    row.className = "grid grid-cols-8 gap-2 text-center text-sm items-center mb-2 animate-slide-in";
+
+    //Get color of box depending on status
+    const getBoxClass = (status) => {
+        if (status === 'match') return 'box-correct text-black font-bold';
+        if (status === 'younger' || status === 'older') return 'box-partial';
+        if (status === 'taller' || status === 'shorter') return 'box-partial';
+        return 'box-wrong';
+    };
+
+    //Get arrow for age and height depending on status
+    const getArrow = (status) => {
+        if (status === 'taller' || status === 'older') return ' ↓';
+        if (status === 'shorter' || status === 'younger') return ' ↑';
+        return '';
+    };
+
+    //Add boxes to row
+    row.innerHTML = `
+        <div class="text-gray-500">${guessCount}</div>
+        <div class="${getBoxClass(data.age.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.age.value}${getArrow(data.age.status)}</div>
+        <div class="${getBoxClass(data.height.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.height.value}${getArrow(data.height.status)}</div>
+        <div class="${getBoxClass(data.hair.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.hair.value}</div>
+        <div class="${getBoxClass(data.sex.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.sex.value}</div>
+        <div class="${getBoxClass(data.series.status)} p-4 rounded-lg h-16 flex items-center justify-center">${data.series.value}</div>
+    `;
+
+    //Add row to results container
+    resultsContainer.prepend(row);
+}
+
+//User presses Guess button
+guessBtn.addEventListener('click', handleGuess);
+
+//User presses 'Enter' on keyboard
+guess.addEventListener('keydown', (event) => {
+    if(event.key == 'Enter'){
+        handleGuess();
+    }
+});

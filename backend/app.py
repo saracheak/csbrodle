@@ -1,11 +1,14 @@
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request, jsonify
 import query_db
 
 app = Flask(__name__)
 app.secret_key = "csbro"
 
-@app.route("/")
+@app.route("/api/start")
 def index():
+    """
+    Picks target character and save in session
+    """
     target = query_db.get_random_character()
     session['target_name'] = target[0]
     session['target_age'] = target[1]
@@ -13,18 +16,25 @@ def index():
     session['target_hair'] = target[3]
     session['target_sex'] = target[4]
     session['target_series'] = target[5]
-    return render_template("index.html")
+    return jsonify({"status": "Game started", "message": "Secret character selected"})
 
-@app.route("/api/search")
+@app.route("/api/characters")
 def search():
-    return
+    """
+    Gets full list of characters
+    """
+    all_characters = query_db.get_all_characters()
+    return jsonify(all_characters)
     
 
-@app.route("/api/guess")
+@app.route("/api/guess", methods=['POST'])
 def guess():
+    """
+    Triggers when user guesses a character name
+    """
     target_attr = [session.get('target_name'), session.get('target_age'), session.get('target_height'), session.get('target_hair'), session.get('target_sex'), session.get('target_series')]
-    # user_guess = request.json.get('guess')
-    user_guess = "Meredith Palmer"
+    user_guess = request.json.get('name')
+    print(user_guess)
     return query_db.compare_characters(user_guess, target_attr)
 
 if __name__ == '__main__':
