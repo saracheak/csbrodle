@@ -1,7 +1,7 @@
 # TV Character Game
 
 ## Wordle-like game for TV show characters 
-csbrodle is a game that starts with TV show characters that my friends and I have watched, but has easy customization for any TV shows you have watched.
+csbrodle is a game that starts with TV show characters that my friends and I have watched, but has easy customization for different TV characters if you would like to adapt and play with your friends too!
 
 ## Characters from the following TV shows:
 <li>New Girl</li>
