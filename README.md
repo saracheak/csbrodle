@@ -3,6 +3,8 @@
 ## Wordle-like game for TV show characters 
 csbrodle is a game that starts with TV show characters that my friends and I have watched, but has easy customization for different TV characters if you would like to adapt and play with your friends too!
 
+![csbrodle-game-image](src/assets/csbrodle.png)
+
 ## Characters from the following TV shows:
 <li>New Girl</li>
 <li>The Summer I Turned Pretty</li>
@@ -18,7 +20,7 @@ Only main or secondary characters were chosen.
 These customizations only works when running app on localhost!
 
 #### Customize TV Characters
-The app takes in TV characters from `csbrodle_data.csv `. You can add/delete TV characters into this csv as long as the attributes **exactly** match according to name, age, height, hair, sex, series. 
+The app takes in TV characters from `csbrodle_data.csv`. You can add/delete TV characters into this csv as long as the attributes **exactly** match according to name, age, height, hair, sex, series. 
 
 #### Choose Target Character
 If users would like to decide the target character, they can hard code the character name **exactly** as in the `csbrodle_data.csv`. 
@@ -27,5 +29,5 @@ If users would like to decide the target character, they can hard code the chara
 3. E.g. `target = query_db.get_character_by_name('Conrad Fisher')`
 
 ## Tech Stack
-<li>Backend - Python, Flask</li>
-<li>Frontend - JavaScript, HTML, Tailwind, Vite</li>
+<li>Backend - Python, SQLite, Flask</li>
+<li>Frontend - JavaScript, HTML, Tailwind CSS, Vite</li>
