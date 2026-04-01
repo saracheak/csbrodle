@@ -31,3 +31,4 @@ If users would like to decide the target character, they can hard code the chara
 ## Tech Stack
 <li>Backend - Python, SQLite, Flask</li>
 <li>Frontend - JavaScript, HTML, Tailwind CSS, Vite</li>
+<li>Hosting - Render</li>
