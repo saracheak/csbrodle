@@ -2,7 +2,7 @@ from flask import session
 import sqlite3
 
 def connect_to_db():
-    conn = sqlite3.connect("./../data/characters.sqlite") 
+    conn = sqlite3.connect("data/characters.sqlite") 
     return conn
 
 def get_all_characters():

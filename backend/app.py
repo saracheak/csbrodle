@@ -1,8 +1,14 @@
-from flask import Flask, render_template, session, request, jsonify
+from flask import Flask, render_template, session, request, jsonify, send_from_directory
 from backend import query_db
 
-app = Flask(__name__)
+app = Flask(__name__, 
+            static_folder='../dist', 
+            static_url_path='/')
 app.secret_key = "csbro"
+
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route("/api/start")
 def index():
@@ -39,4 +45,5 @@ def guess():
     return query_db.compare_characters(user_guess, target_attr)
 
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
