@@ -1,5 +1,6 @@
 from flask import Flask, render_template, session, request, jsonify, send_from_directory
 from backend import query_db
+import os
 
 app = Flask(__name__, 
             static_folder='../dist', 
