@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, request, jsonify
-import query_db
+from backend import query_db
 
 app = Flask(__name__)
 app.secret_key = "csbro"
